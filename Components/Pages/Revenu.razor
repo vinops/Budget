@@ -1,0 +1,58 @@
+﻿@page "/revenus"
+@inject IBudgetMensuelRepository BudgetMensuelRepository
+@rendermode InteractiveServer
+
+<h3>Revenu</h3>
+
+<MudText Typo="Typo.h4" GutterBottom="true">Liste des Revenus</MudText>
+
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudSelect @bind-Value="selectedMois" Label="Mois">
+            <MudSelectItem Value="0">Sélectionner...</MudSelectItem>
+            @foreach (var mois in moisList)
+            {
+                <MudSelectItem Value="@mois.Value">@mois.Name</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSelect @bind-Value="selectedAnnee" Label="Année">
+            <MudSelectItem Value="0">Sélectionner...</MudSelectItem>
+            @foreach (var annee in anneeList)
+            {
+                <MudSelectItem Value="@annee">@annee</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+<MudButton Disabled="@(selectedMois == 0 || selectedAnnee == 0)" OnClick="RechercherRevenus">
+    Rechercher
+</MudButton>
+
+@code {
+    BudgetMensuelService budgetMensuelService = new BudgetMensuelService();
+
+    List<MonthModel> moisList;
+    List<int> anneeList;
+
+    protected override void OnInitialized()
+    {
+        moisList = budgetMensuelService.MonthList;
+        anneeList = budgetMensuelService.YearList;
+    }
+
+    int selectedMois;
+    int selectedAnnee;
+
+    private void RechercherRevenus()
+    {
+        // Appelle la méthode de recherche seulement si les deux sont sélectionnés
+        if (selectedMois != 0 && selectedAnnee != 0)
+        {
+            var test = BudgetMensuelRepository.GetTotalRevenuByMonthAndByYear(selectedMois, selectedAnnee);
+            Console.WriteLine("couocu");
+        }
+    }
+}
